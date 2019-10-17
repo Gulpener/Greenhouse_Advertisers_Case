@@ -1,3 +1,8 @@
+import {
+  BrowserRouter as Router,
+  Route
+} from "react-router-dom";
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 //import $ from 'jquery';
 //import Popper from 'popper.js';
@@ -8,8 +13,11 @@ import './App.css';
 import AdvertiserComponent from './components/advertiser-component/advertiser-component'
 
 function App() {
-  return (<AdvertiserComponent></AdvertiserComponent>);
-
+  
+  return (<Router>
+    
+      <Route path="/" component={AdvertiserComponent}/>      
+    </Router>);
 }
-
+//<AdvertiserComponent useQuery={useQuery()}></AdvertiserComponent>
 export default App;

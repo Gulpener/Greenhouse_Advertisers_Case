@@ -1,20 +1,30 @@
 import React from 'react';
 import moment from 'moment';
+import QueryString from 'query-string'
 import './advertiser-component.css';
 
 class AdvertiserComponent extends React.Component {
   constructor(props) {
     super(props);
+    
+    let sort = { order: "", orderBy: "" };
+
+    if(this.props.location.search)
+    {
+      const parsedQueryString = QueryString.parse(this.props.location.search);
+      sort = {order: parsedQueryString.order, orderBy: parsedQueryString.orderby};      
+    }
+
     this.state = {      
       items: [],
       isAdvertisersLoading: false,
       isAdvertisersError: false,
-      sort: { order: "", orderBy: "" }
+      sort: sort
     };
   }
-  
+
   componentDidMount() {   
-    this.loadAdvertisers();     
+    this.loadAdvertisers();       
   }
 
   loadAdvertisers()
@@ -104,7 +114,7 @@ class AdvertiserComponent extends React.Component {
 
 
     render() {
-      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;      
+      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;          
       let tableContent;
       if(isAdvertisersError)
       {
@@ -119,7 +129,7 @@ class AdvertiserComponent extends React.Component {
         let advertisers = items; 
         if(sort)
         {
-          advertisers = items.sort(this.compareValues(sort.orderBy, sort.order))
+          advertisers = items.sort(this.valueComparer(sort.orderBy, sort.order))
         }
         tableContent = (
           advertisers.map(advertiser => (
@@ -132,7 +142,7 @@ class AdvertiserComponent extends React.Component {
           </tr>
         )));
       }      
-      return (
+      return (            
         <div className="content">
           <h1>Overview of Advertisers</h1>
           <table>
@@ -151,7 +161,8 @@ class AdvertiserComponent extends React.Component {
               }
             </tbody>
           </table>
-        </div>);
+        </div>
+        );
     }
 
     createSortArrow(collumnName, sort)
@@ -184,22 +195,36 @@ class AdvertiserComponent extends React.Component {
     {
       if(this.state.sort.orderBy === collumn)
       {          
+          let parsed = { 
+            orderby: this.state.sort.orderBy,
+            order: this.state.sort.order === "asc" ? "desc" : "asc"
+          };
+          const stringified = QueryString.stringify(parsed);          
+          window.open(`/?${stringified}`, "_self")
+          /*
           this.setState({
             sort: { 
               orderBy: this.state.sort.orderBy,
               order: this.state.sort.order === "asc" ? "desc" : "asc"
             } 
-          });
+          });*/
           
       }
       else
       {
+        let parsed = { 
+          orderby: collumn,
+          order: this.state.sort.order
+        };
+        const stringified = QueryString.stringify(parsed);
+        window.open(`/?${stringified}`, "_self")
+        /*
         this.setState({
           sort: { 
             orderBy: collumn,
             order: this.state.sort.order
           } 
-        });
+        });*/
       }
     }
 
@@ -207,7 +232,7 @@ class AdvertiserComponent extends React.Component {
       return new moment(string).format("DD-MM-YYYY");
     }
     
-     compareValues(key, order='asc') {
+     valueComparer(key, order='asc') {
       return function(a, b) {
         if(!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {          
           return 0;
