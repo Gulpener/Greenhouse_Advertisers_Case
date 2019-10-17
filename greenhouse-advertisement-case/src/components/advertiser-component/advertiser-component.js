@@ -198,16 +198,17 @@ class AdvertiserComponent extends React.Component {
           let parsed = { 
             orderby: this.state.sort.orderBy,
             order: this.state.sort.order === "asc" ? "desc" : "asc"
-          };
-          const stringified = QueryString.stringify(parsed);          
-          window.open(`/?${stringified}`, "_self")
-          /*
+          };              
+          this.props.history.push({
+            pathname: '/',
+            search: "?" + new URLSearchParams(parsed).toString()});              
+          
           this.setState({
             sort: { 
               orderBy: this.state.sort.orderBy,
               order: this.state.sort.order === "asc" ? "desc" : "asc"
             } 
-          });*/
+          });
           
       }
       else
@@ -216,15 +217,15 @@ class AdvertiserComponent extends React.Component {
           orderby: collumn,
           order: this.state.sort.order
         };
-        const stringified = QueryString.stringify(parsed);
-        window.open(`/?${stringified}`, "_self")
-        /*
+        this.props.history.push({
+          pathname: '/',
+          search: "?" + new URLSearchParams(parsed).toString()});           
         this.setState({
           sort: { 
             orderBy: collumn,
             order: this.state.sort.order
           } 
-        });*/
+        });
       }
     }
 
