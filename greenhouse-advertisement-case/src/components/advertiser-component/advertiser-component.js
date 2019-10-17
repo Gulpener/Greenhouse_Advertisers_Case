@@ -31,7 +31,7 @@ class AdvertiserComponent extends React.Component {
     this.setState({      
       isAdvertisersLoading: true,       
     });
-    fetch("https://5b87a97d35589600143c1424.mockapi.io/api/v1/advertisers?")
+    fetch("https://5b87a97d35589600143c1424.mockapi.io/api/v1/advertisers")
       .then(res => res.json())
       .then(
         (result) => {                   
@@ -113,8 +113,7 @@ class AdvertiserComponent extends React.Component {
 
 
     render() {
-      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;   
-      console.log(sort);
+      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;         
       let tableContent;
       if(isAdvertisersError)
       {
@@ -192,8 +191,8 @@ class AdvertiserComponent extends React.Component {
     }
 
     handleClick(collumn)
-    {
-      let sort = {};
+    {      
+      let sort;    
       if(this.state.sort.orderBy === collumn)
       {          
           sort = { 
@@ -205,8 +204,8 @@ class AdvertiserComponent extends React.Component {
       {        
         sort = { 
           orderBy: collumn,
-          order: this.state.sort.order
-        };        
+          order: this.state.sort.order ? this.state.sort.order : "desc"
+        };               
       }
 
       this.props.history.push({
