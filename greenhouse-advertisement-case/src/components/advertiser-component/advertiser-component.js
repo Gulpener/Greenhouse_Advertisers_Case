@@ -13,8 +13,7 @@ class AdvertiserComponent extends React.Component {
     {
       const parsedQueryString = QueryString.parse(this.props.location.search);
       sort = {order: parsedQueryString.order, orderBy: parsedQueryString.orderby};      
-    }
-
+    }    
     this.state = {      
       items: [],
       isAdvertisersLoading: false,
@@ -114,7 +113,8 @@ class AdvertiserComponent extends React.Component {
 
 
     render() {
-      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;          
+      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;   
+      console.log(sort);
       let tableContent;
       if(isAdvertisersError)
       {
@@ -199,15 +199,16 @@ class AdvertiserComponent extends React.Component {
           sort = { 
             orderBy: this.state.sort.orderBy,
             order: this.state.sort.order === "asc" ? "desc" : "asc"
-          };                                  
+          };            
       }
       else
-      {
+      {        
         sort = { 
-          orderby: collumn,
+          orderBy: collumn,
           order: this.state.sort.order
         };        
       }
+
       this.props.history.push({
         pathname: '/',
         search: "?" + new URLSearchParams(sort).toString()});              
