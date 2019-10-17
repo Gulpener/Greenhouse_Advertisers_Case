@@ -7,57 +7,97 @@ class AdvertiserComponent extends React.Component {
     super(props);
     this.state = {      
       items: [],
-      isLoading: false,
-      isError: false,
+      isAdvertisersLoading: false,
+      isAdvertisersError: false,
     };
   }
   
-  componentDidMount() {
-    this.setState({
-      items: [],
-      isLoading: true,
-      isError: false    
+  componentDidMount() {   
+    this.loadAdvertisers();     
+  }
+
+  loadAdvertisers()
+  {
+    this.setState({      
+      isAdvertisersLoading: true,       
     });
-    fetch("https://5b87a97d35589600143c1424.mockapi.io/api/v1/advertisers")
+    fetch("https://5b87a97d35589600143c1424.mockapi.io/api/v1/advertisers?")
       .then(res => res.json())
       .then(
-        (result) => {          
+        (result) => {                   
           if(Array.isArray(result))
           {
             this.setState({            
               items: result,
-              isLoading: false,
-              isError: false
+              isAdvertisersLoading: false,              
             });
+            this.loadAdvertiserStatistics();
           }
           else
           {
-            this.setState({            
-              items: [],
-              isLoading: false,
-              isError: true
+            console.error(result);
+            this.setState({                          
+              isAdvertisersLoading: false,
+              isAdvertisersError: true
             }); 
           }
         },
-        (error) => {          
-          this.setState({            
-            items: [],
-            isLoading: false,
-            isError: true
+        (error) => {    
+          console.error(error);      
+          this.setState({                        
+            isAdvertisersLoading: false,
+            isAdvertisersError: true
           });          
         }
       )
   }
 
+  loadAdvertiserStatistics()
+  {
+    fetch("https://5b87a97d35589600143c1424.mockapi.io/api/v1/advertiser-statistics")
+      .then(res => res.json())
+      .then(
+        (result) => {                   
+          if(Array.isArray(result))
+          {                        
+            this.setState({            
+              items: this.enrichAdvertisers(this.state.items, result),
+            });          
+          }
+          else
+          {
+            console.error(result);
+          }
+        },
+        (error) => {          
+          console.error(error);
+        }
+      )
+  }
+
+  enrichAdvertisers(items, statistics)
+  {
+      items.forEach(function(item){
+          let statistic = statistics.find(x=>x.advertiserId === item.id);          
+          if(statistic)
+          {
+            item.clicks = statistic.clicks;
+            item.impressions = statistic.impressions;
+          }
+      });
+
+      return items;
+  }
+
 
     render() {
-      const { items, isLoading, isError } = this.state;      
+      const { items, isAdvertisersLoading, isAdvertisersError } = this.state;      
       let tableContent;
-      if(isError)
+      if(isAdvertisersError)
       {
         tableContent = (<tr><td>Could not load data :(</td><td></td><td></td></tr>)
       }
-      else if(isLoading)
+      else if(isAdvertisersLoading)
       {
         tableContent = (<tr><td>Loading...</td><td></td><td></td></tr>)
       }
@@ -69,6 +109,8 @@ class AdvertiserComponent extends React.Component {
             <td>{item.name}</td>
             <td>{this.formatDate(item.createdAt)}</td>
             <td>{item.campaignIds.length}</td>
+            <td>{item.impressions ? item.impressions : "n/a"}</td>
+            <td>{item.clicks ? item.clicks : "n/a"}</td>
           </tr>
         )));
       }      
@@ -81,6 +123,8 @@ class AdvertiserComponent extends React.Component {
                 <th>Advertiser</th>
                 <th>Creation date</th>
                 <th># campaigns</th>
+                <th>Impressions</th>
+                <th>Clicks</th>
               </tr>
             </thead>
             <tbody>
