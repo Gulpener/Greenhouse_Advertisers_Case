@@ -1,0 +1,38 @@
+.content
+{
+    margin:20px;
+    padding:20px;
+    background: #222222;
+    border: solid 1px #404040;
+    font-size:12px;
+}
+
+H1{
+    font-weight: bold;
+    font-size:14px;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    border-bottom: solid 1px #404040;
+}
+
+.tabel{
+    width:100%;    
+}
+
+tr{    
+    border: solid 1px #404040;
+}
+
+tr:hover{
+    border-left: 0px;
+    border-right: 0px;
+    background: #2D2D2D;    
+}
+
+th{
+    text-transform: uppercase;
+}
+
+td, th{
+    padding:10px;
+}

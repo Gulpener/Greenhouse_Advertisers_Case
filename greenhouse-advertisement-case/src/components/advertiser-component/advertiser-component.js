@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import './advertiser-component.css';
 
 class AdvertiserComponent extends React.Component {
   constructor(props) {
@@ -72,14 +73,14 @@ class AdvertiserComponent extends React.Component {
         )));
       }      
       return (
-        <div>
-          <h1>Overview of advertisers</h1>
-          <table className="table table-striped">
+        <div className="content">
+          <h1>Overview of Advertisers</h1>
+          <table className="tabel">
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Advertiser</th>
                 <th>Creation date</th>
-                <th># of campaigns</th>
+                <th># campaigns</th>
               </tr>
             </thead>
             <tbody>
