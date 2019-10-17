@@ -1,45 +1,76 @@
-import React, { Component } from 'react';
+import React from 'react';
 import moment from 'moment';
 
 class AdvertiserComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {      
-      items: []
+      items: [],
+      isLoading: false,
+      isError: false,
     };
   }
-
   
   componentDidMount() {
+    this.setState({
+      items: [],
+      isLoading: true,
+      isError: false    
+    });
     fetch("https://5b87a97d35589600143c1424.mockapi.io/api/v1/advertisers")
       .then(res => res.json())
       .then(
-        (result) => {
-          this.setState({            
-            items: result
-          });
+        (result) => {          
+          if(Array.isArray(result))
+          {
+            this.setState({            
+              items: result,
+              isLoading: false,
+              isError: false
+            });
+          }
+          else
+          {
+            this.setState({            
+              items: [],
+              isLoading: false,
+              isError: true
+            }); 
+          }
         },
-        (error) => {
-          console.log(error);
+        (error) => {          
+          this.setState({            
+            items: [],
+            isLoading: false,
+            isError: true
+          });          
         }
       )
   }
 
 
     render() {
-      const { items } = this.state;
-      let tableItems;
-      if(items)
+      const { items, isLoading, isError } = this.state;      
+      let tableContent;
+      if(isError)
       {
-        tableItems = (
+        tableContent = (<tr><td>Could not load data :(</td><td></td><td></td></tr>)
+      }
+      else if(isLoading)
+      {
+        tableContent = (<tr><td>Loading...</td><td></td><td></td></tr>)
+      }
+      else if(items)
+      {
+        tableContent = (
           items.map(item => (
           <tr key={item.name}>
             <td>{item.name}</td>
             <td>{this.formatDate(item.createdAt)}</td>
             <td>{item.campaignIds.length}</td>
           </tr>
-      )));
-      }
+        )));
+      }      
       return (
         <div>
           <h1>Overview of advertisers</h1>
@@ -53,7 +84,7 @@ class AdvertiserComponent extends React.Component {
             </thead>
             <tbody>
               {
-                tableItems
+                tableContent
               }
             </tbody>
           </table>
