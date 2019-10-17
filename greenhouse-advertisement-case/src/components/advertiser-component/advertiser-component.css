@@ -15,7 +15,7 @@ H1{
     border-bottom: solid 1px #404040;
 }
 
-.tabel{
+table{
     width:100%;    
 }
 
@@ -35,4 +35,8 @@ th{
 
 td, th{
     padding:10px;
+}
+
+.orderIcon{
+    margin:5px;
 }

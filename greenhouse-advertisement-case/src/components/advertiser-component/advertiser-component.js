@@ -9,6 +9,7 @@ class AdvertiserComponent extends React.Component {
       items: [],
       isAdvertisersLoading: false,
       isAdvertisersError: false,
+      sort: { order: "", orderBy: "" }
     };
   }
   
@@ -27,8 +28,20 @@ class AdvertiserComponent extends React.Component {
         (result) => {                   
           if(Array.isArray(result))
           {
+            let advertisers = [];
+            result.forEach(function(item){              
+              advertisers.push(
+                {
+                  id: item.id,
+                  name: item.name,
+                  createdAt: item.createdAt,
+                  campaigns: item.campaignIds.length
+                }
+              )
+            });
+
             this.setState({            
-              items: result,
+              items: advertisers,
               isAdvertisersLoading: false,              
             });
             this.loadAdvertiserStatistics();
@@ -61,7 +74,7 @@ class AdvertiserComponent extends React.Component {
           if(Array.isArray(result))
           {                        
             this.setState({            
-              items: this.enrichAdvertisers(this.state.items, result),
+              items: this.enrichAdvertisersWithStatistics(this.state.items, result),
             });          
           }
           else
@@ -75,7 +88,7 @@ class AdvertiserComponent extends React.Component {
       )
   }
 
-  enrichAdvertisers(items, statistics)
+  enrichAdvertisersWithStatistics(items, statistics)
   {
       items.forEach(function(item){
           let statistic = statistics.find(x=>x.advertiserId === item.id);          
@@ -91,40 +104,45 @@ class AdvertiserComponent extends React.Component {
 
 
     render() {
-      const { items, isAdvertisersLoading, isAdvertisersError } = this.state;      
+      const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;      
       let tableContent;
       if(isAdvertisersError)
       {
-        tableContent = (<tr><td>Could not load data :(</td><td></td><td></td></tr>)
+        tableContent = (<tr><td>Could not load data :(</td><td></td><td></td><td></td><td></td></tr>)
       }
       else if(isAdvertisersLoading)
       {
-        tableContent = (<tr><td>Loading...</td><td></td><td></td></tr>)
+        tableContent = (<tr><td>Loading...</td><td></td><td></td><td></td><td></td></tr>)
       }
       else if(items)
       {
+        let advertisers = items; 
+        if(sort)
+        {
+          advertisers = items.sort(this.compareValues(sort.orderBy, sort.order))
+        }
         tableContent = (
-          items.map(item => (
-          <tr key={item.name}>
-            <td>{item.name}</td>
-            <td>{this.formatDate(item.createdAt)}</td>
-            <td>{item.campaignIds.length}</td>
-            <td>{item.impressions ? item.impressions : "n/a"}</td>
-            <td>{item.clicks ? item.clicks : "n/a"}</td>
+          advertisers.map(advertiser => (
+          <tr key={advertiser.name}>
+            <td>{advertiser.name}</td>
+            <td>{this.formatDate(advertiser.createdAt)}</td>
+            <td>{advertiser.campaigns}</td>
+            <td>{advertiser.impressions ? advertiser.impressions : "n/a"}</td>
+            <td>{advertiser.clicks ? advertiser.clicks : "n/a"}</td>
           </tr>
         )));
       }      
       return (
         <div className="content">
           <h1>Overview of Advertisers</h1>
-          <table className="tabel">
+          <table>
             <thead>
               <tr>
-                <th>Advertiser</th>
-                <th>Creation date</th>
-                <th># campaigns</th>
-                <th>Impressions</th>
-                <th>Clicks</th>
+                {this.createCollumnHeader("name", "Advertiser", sort)}
+                {this.createCollumnHeader("createdAt", "Creation date", sort)}
+                {this.createCollumnHeader("campaigns", "# campaigns", sort)}
+                {this.createCollumnHeader("impressions", "Impressions", sort)}
+                {this.createCollumnHeader("clicks", "Clicks", sort)}
               </tr>
             </thead>
             <tbody>
@@ -136,8 +154,80 @@ class AdvertiserComponent extends React.Component {
         </div>);
     }
 
+    createSortArrow(collumnName, sort)
+    {
+      if(sort)
+      {
+        if(collumnName === sort.orderBy)
+        {
+          let icon;
+          if(sort.order === "asc")
+          {
+            icon = "^";
+          }
+          else
+          {
+            icon = "v";
+          }          
+          return <span className="orderIcon">{icon}</span>;
+        }
+      }
+      return;
+    }
+
+    createCollumnHeader(collumnName, displayName, sort)
+    {
+      return (<th onClick={() => this.handleClick(collumnName)}>{displayName}{this.createSortArrow(collumnName, sort)}</th>);  
+    }
+
+    handleClick(collumn)
+    {
+      if(this.state.sort.orderBy === collumn)
+      {          
+          this.setState({
+            sort: { 
+              orderBy: this.state.sort.orderBy,
+              order: this.state.sort.order === "asc" ? "desc" : "asc"
+            } 
+          });
+          
+      }
+      else
+      {
+        this.setState({
+          sort: { 
+            orderBy: collumn,
+            order: this.state.sort.order
+          } 
+        });
+      }
+    }
+
     formatDate(string){
       return new moment(string).format("DD-MM-YYYY");
+    }
+    
+     compareValues(key, order='asc') {
+      return function(a, b) {
+        if(!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {          
+          return 0;
+        }
+
+        const varA = (typeof a[key] === 'string') ?
+          a[key].toUpperCase() : a[key];
+        const varB = (typeof b[key] === 'string') ?
+          b[key].toUpperCase() : b[key];
+
+        let comparison = 0;
+        if (varA > varB) {
+          comparison = 1;
+        } else if (varA < varB) {
+          comparison = -1;
+        }
+        return (
+          (order === 'desc') ? (comparison * -1) : comparison
+        );
+      };
     }
   }
 
