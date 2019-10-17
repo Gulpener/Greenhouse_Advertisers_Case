@@ -193,40 +193,28 @@ class AdvertiserComponent extends React.Component {
 
     handleClick(collumn)
     {
+      let sort = {};
       if(this.state.sort.orderBy === collumn)
       {          
-          let parsed = { 
-            orderby: this.state.sort.orderBy,
+          sort = { 
+            orderBy: this.state.sort.orderBy,
             order: this.state.sort.order === "asc" ? "desc" : "asc"
-          };              
-          this.props.history.push({
-            pathname: '/',
-            search: "?" + new URLSearchParams(parsed).toString()});              
-          
-          this.setState({
-            sort: { 
-              orderBy: this.state.sort.orderBy,
-              order: this.state.sort.order === "asc" ? "desc" : "asc"
-            } 
-          });
-          
+          };                                  
       }
       else
       {
-        let parsed = { 
+        sort = { 
           orderby: collumn,
           order: this.state.sort.order
-        };
-        this.props.history.push({
-          pathname: '/',
-          search: "?" + new URLSearchParams(parsed).toString()});           
-        this.setState({
-          sort: { 
-            orderBy: collumn,
-            order: this.state.sort.order
-          } 
-        });
+        };        
       }
+      this.props.history.push({
+        pathname: '/',
+        search: "?" + new URLSearchParams(parssorted).toString()});              
+      
+      this.setState({
+        sort: sort 
+      });
     }
 
     formatDate(string){
