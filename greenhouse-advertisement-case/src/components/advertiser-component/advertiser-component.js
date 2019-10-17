@@ -210,7 +210,7 @@ class AdvertiserComponent extends React.Component {
       }
       this.props.history.push({
         pathname: '/',
-        search: "?" + new URLSearchParams(parssorted).toString()});              
+        search: "?" + new URLSearchParams(sort).toString()});              
       
       this.setState({
         sort: sort 
