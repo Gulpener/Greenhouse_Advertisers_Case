@@ -12,8 +12,9 @@ class AdvertiserComponent extends React.Component {
     if(this.props.location.search)
     {
       const parsedQueryString = QueryString.parse(this.props.location.search);
-      sort = {order: parsedQueryString.order, orderBy: parsedQueryString.orderby};      
+      sort = {order: parsedQueryString.order, orderBy: parsedQueryString.orderBy};      
     }    
+
     this.state = {      
       items: [],
       isAdvertisersLoading: false,
