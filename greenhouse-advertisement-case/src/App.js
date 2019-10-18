@@ -14,10 +14,9 @@ import AdvertiserComponent from './components/advertiser-component/advertiser-co
 
 function App() {
   
-  return (<Router>
-    
+  return (
+    <Router>
       <Route path="/" component={AdvertiserComponent}/>      
     </Router>);
 }
-//<AdvertiserComponent useQuery={useQuery()}></AdvertiserComponent>
 export default App;
