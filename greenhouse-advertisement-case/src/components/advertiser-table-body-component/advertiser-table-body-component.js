@@ -9,7 +9,6 @@ class AdvertiserTableBodyComponent extends React.Component {
 
     render(){
         const { data, isAdvertisersLoading, isAdvertisersError, sort } = this.props;         
-        console.log(this.props);
         if(isAdvertisersError)
         {
           return (<tr><td>Could not load data :(</td><td></td><td></td><td></td><td></td></tr>)
@@ -23,7 +22,6 @@ class AdvertiserTableBodyComponent extends React.Component {
           let advertisers = data; 
           if(sort)
           {
-            console.log(sort);
             advertisers = data.sort(this.valueComparer(sort.orderBy, sort.order))
           }
           return(

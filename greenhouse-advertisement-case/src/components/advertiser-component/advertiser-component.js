@@ -2,6 +2,7 @@ import React from 'react';
 import QueryString from 'query-string';
 import './advertiser-component.css';
 import AdvertiserTableBodyComponent from '../advertiser-table-body-component/advertiser-table-body-component';
+import AdvertiserTableHeaderCollumnComponent from '../advertiser-table-header-collumn-component/advertiser-table-header-collumn-component';
 
 class AdvertiserComponent extends React.Component {
   constructor(props) {
@@ -98,20 +99,6 @@ class AdvertiserComponent extends React.Component {
       )
   }
 
-  enrichAdvertisersWithStatistics(items, statistics)
-  {
-      items.forEach(function(item){
-          let statistic = statistics.find(x=>x.advertiserId === item.id);          
-          if(statistic)
-          {
-            item.clicks = statistic.clicks;
-            item.impressions = statistic.impressions;
-          }
-      });
-
-      return items;
-  }
-
 
     render() {
       const { items, isAdvertisersLoading, isAdvertisersError, sort } = this.state;         
@@ -142,30 +129,14 @@ class AdvertiserComponent extends React.Component {
         );
     }
 
-    createSortArrow(collumnName, sort)
-    {
-      if(sort)
-      {
-        if(collumnName === sort.orderBy)
-        {
-          let icon;
-          if(sort.order === "asc")
-          {
-            icon = "^";
-          }
-          else
-          {
-            icon = "v";
-          }          
-          return <span className="orderIcon">{icon}</span>;
-        }
-      }
-      return;
-    }
-
     createCollumnHeader(collumnName, displayName, sort)
     {
-      return (<th onClick={() => this.handleClick(collumnName)}>{displayName}{this.createSortArrow(collumnName, sort)}</th>);  
+      return (<AdvertiserTableHeaderCollumnComponent
+        collumnName={collumnName}
+        displayName={displayName}
+        sort={sort}
+        handleClick={(collumn) => this.handleClick(collumn)}>
+      </AdvertiserTableHeaderCollumnComponent>);  
     }
 
     handleClick(collumn)
@@ -194,6 +165,20 @@ class AdvertiserComponent extends React.Component {
         sort: sort 
       });
     }
+
+    enrichAdvertisersWithStatistics(items, statistics)
+  {
+      items.forEach(function(item){
+          let statistic = statistics.find(x=>x.advertiserId === item.id);          
+          if(statistic)
+          {
+            item.clicks = statistic.clicks;
+            item.impressions = statistic.impressions;
+          }
+      });
+
+      return items;
+  }
   }
 
   export default AdvertiserComponent;
